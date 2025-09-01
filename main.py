@@ -906,3 +906,4 @@ if __name__ == "__main__":
             bot.run(DISCORD_TOKEN)
         except Exception as e:
             logger.error(f"Bot başlatılamadı: {e}")
+
