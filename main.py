@@ -384,6 +384,123 @@ async def join(ctx):
         await ctx.send('❌ Ses kanalına katılırken hata oluştu!')
 
 # Diğer tüm komutlarınızı buraya ekleyin...
+
+# ================== MÜZİK KOMUTLARI ==================
+
+@bot.command()
+async def play(ctx, *, url: str):
+    """Bir şarkı çal veya sıraya ekle"""
+    if not ctx.author.voice:
+        return await ctx.send("❌ Önce bir ses kanalına katılman gerekiyor!")
+
+    if ctx.voice_client is None:
+        await ctx.author.voice.channel.connect()
+
+    queue = get_queue(ctx.guild.id)
+    effect = get_sound_effect(ctx.guild.id)
+
+    try:
+        # Spotify link kontrolü
+        if "spotify.com" in url and spotify:
+            tracks = await get_spotify_tracks(url)
+            if not tracks:
+                return await ctx.send("❌ Spotify'dan şarkı bulunamadı!")
+            
+            for track in tracks:
+                queue.append(track)
+            await ctx.send(f"✅ {len(tracks)} şarkı sıraya eklendi (Spotify).")
+        else:
+            # YouTube veya normal arama
+            queue.append(url)
+            await ctx.send("🎶 Şarkı sıraya eklendi!")
+
+        # Eğer ses çalmıyorsa sıradakini başlat
+        if not ctx.voice_client.is_playing():
+            await play_next(ctx)
+    except Exception as e:
+        await ctx.send(f"❌ Hata: {e}")
+
+
+@bot.command()
+async def skip(ctx):
+    """Şu anki şarkıyı geç"""
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
+        await ctx.send("⏭️ Şarkı geçildi.")
+    else:
+        await ctx.send("❌ Şu anda çalan şarkı yok.")
+
+
+@bot.command()
+async def stop(ctx):
+    """Müziği durdur ve sırayı temizle"""
+    if ctx.voice_client:
+        queue = get_queue(ctx.guild.id)
+        queue.clear()
+        ctx.voice_client.stop()
+        await ctx.send("⏹️ Müzik durduruldu ve sıra temizlendi.")
+
+
+@bot.command()
+async def pause(ctx):
+    """Şarkıyı duraklat"""
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.pause()
+        await ctx.send("⏸️ Şarkı duraklatıldı.")
+    else:
+        await ctx.send("❌ Çalan şarkı yok.")
+
+
+@bot.command()
+async def resume(ctx):
+    """Şarkıyı devam ettir"""
+    if ctx.voice_client and ctx.voice_client.is_paused():
+        ctx.voice_client.resume()
+        await ctx.send("▶️ Şarkı devam ediyor.")
+    else:
+        await ctx.send("❌ Duraklatılmış şarkı yok.")
+
+
+@bot.command()
+async def leave(ctx):
+    """Ses kanalından çık"""
+    if ctx.voice_client:
+        await ctx.voice_client.disconnect()
+        await cleanup_guild_data(ctx.guild.id)
+        await ctx.send("👋 Ses kanalından ayrıldım.")
+    else:
+        await ctx.send("❌ Zaten bir ses kanalında değilim.")
+
+
+@bot.command()
+async def queue(ctx):
+    """Sıradaki şarkıları göster"""
+    queue = get_queue(ctx.guild.id)
+    if not queue:
+        return await ctx.send("📭 Sıra boş.")
+    
+    msg = "🎶 **Sıradaki Şarkılar:**\n"
+    for i, song in enumerate(list(queue)[:10], 1):
+        msg += f"{i}. {song}\n"
+    await ctx.send(msg)
+
+
+@bot.command()
+async def mhelp(ctx):
+    """Botun müzik komutlarını göster"""
+    help_text = """
+🎵 **Müzik Botu Komutları**
+`!join` - Ses kanalına katıl
+`!play <url veya isim>` - Şarkı çal veya sıraya ekle
+`!skip` - Şarkıyı geç
+`!stop` - Müzik durdur ve sırayı temizle
+`!pause` - Duraklat
+`!resume` - Devam et
+`!leave` - Ses kanalından çık
+`!queue` - Sıradaki şarkıları göster
+"""
+    await ctx.send(help_text)
+
 # Bot'u başlat
 if __name__ == "__main__":
     if not DISCORD_TOKEN:
