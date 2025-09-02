@@ -1,3 +1,26 @@
+import os
+import sys
+
+# audioop modülü için geçici çözüm
+try:
+    import audioop
+except ImportError:
+    # audioop modülü yoksa basit bir mock oluştur
+    class MockAudioop:
+        def __init__(self):
+            pass
+        def __getattr__(self, name):
+            def mock_func(*args, **kwargs):
+                return b'\x00' * 1024  # Sessizlik döndür
+            return mock_func
+    
+    sys.modules['audioop'] = MockAudioop()
+
+# Şimdi normal import'lar...
+import discord
+from discord.ext import commands
+# ... diğer import'lar
+
 # Render.com için HTTP server eklentisi
 from flask import Flask
 import threading
