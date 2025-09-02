@@ -35,9 +35,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Environment variables
-DISCORD_TOKEN = "MTE2Mzg5MjIxNzU3Mjc2MTY1MQ.GyXcID.tYNXVGElnPJPwqgFs8xHq2hrG7251jS-mIPAIg"
-SPOTIFY_CLIENT_ID = "8902f0b678fa416cbf601bfa50dd9cca" 
-SPOTIFY_CLIENT_SECRET = "f10bc7279d0248b088645781f5c94c57"
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID') 
+SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
 
 # Bot ayarları
 intents = discord.Intents.default()
