@@ -851,73 +851,52 @@ async def mhelp(ctx):
     try:
         embed = discord.Embed(title="🎵 Müzik Bot Komutları", color=0xff9900)
         
-        basic_commands = [
-            ("!join", "Ses kanalına katıl"),
-            ("!leave", "Ses kanalından çık"),
-            ("!p <şarkı>", "YouTube'dan müzik çal"),
-            ("!skip", "Sıradaki şarkıya geç"),
-            ("!stop", "Müziği durdur"),
-            ("!pause / !resume", "Duraklat / Devam ettir"),
-        ]
+        # Temel komutlar - tek field'da
+        basic_text = """
+`!join` - Ses kanalına katıl
+`!leave` - Ses kanalından çık  
+`!p <şarkı>` - YouTube'dan müzik çal
+`!skip` - Sıradaki şarkıya geç
+`!stop` - Müziği durdur
+`!pause` / `!resume` - Duraklat / Devam ettir
+        """
+        embed.add_field(name="🎵 Temel Komutlar", value=basic_text, inline=False)
         
-        for cmd, desc in basic_commands:
-            embed.add_field(name=cmd, value=desc, inline=False)
+        # Kontrol komutları
+        control_text = """
+`!q` - Şarkı sırasını göster
+`!clear` - Sırayı temizle
+`!shuffle` - Sırayı karıştır
+`!volume <0-100>` - Ses seviyesi ayarla
+`!np` - Şu an çalan şarkıyı göster
+        """
+        embed.add_field(name="📝 Kontrol", value=control_text, inline=False)
         
-        embed.add_field(name="**📝 Sıra & Kontrol**", value="", inline=False)
-        queue_commands = [
-            ("!q", "Şarkı sırasını göster"),
-            ("!clear", "Sırayı temizle"),
-            ("!shuffle", "Sırayı karıştır"),
-            ("!volume <0-100>", "Ses seviyesi ayarla"),
-            ("!np", "Şu an çalan şarkıyı göster"),
-        ]
+        # İleri özellikler
+        advanced_text = """
+`!r` - Tekrar modunu göster/ayarla
+`!efekt` - Ses efektlerini göster
+`!history` - Geçmiş şarkıları göster
+`!sp <url>` - Spotify URL çal
+        """
+        embed.add_field(name="⚡ İleri Özellikler", value=advanced_text, inline=False)
         
-        for cmd, desc in queue_commands:
-            embed.add_field(name=cmd, value=desc, inline=True)
-        
-        embed.add_field(name="**🔁 Tekrar Modu**", value="", inline=False)
-        repeat_commands = [
-            ("!r", "Mevcut tekrar modunu göster"),
-            ("!r off", "Tekrarı kapat"),
-            ("!r song", "Şarkı tekrarı"),
-            ("!r queue", "Sıra tekrarı"),
-        ]
-        
-        for cmd, desc in repeat_commands:
-            embed.add_field(name=cmd, value=desc, inline=True)
-        
-        embed.add_field(name="**🎛️ Ses Efektleri**", value="", inline=False)
-        effect_commands = [
-            ("!efekt", "Mevcut efektleri göster"),
-            ("!efekt normal", "Efektsiz"),
-            ("!efekt bassboost", "Bass artırma"),
-            ("!efekt nightcore", "Nightcore"),
-            ("!efekt slowed", "Yavaşlatılmış"),
-            ("!efekt 8d", "8D Audio"),
-        ]
-        
-        for cmd, desc in effect_commands:
-            embed.add_field(name=cmd, value=desc, inline=True)
-        
-        embed.add_field(name="**📜 Müzik Geçmişi**", value="", inline=False)
-        history_commands = [
-            ("!history", "Geçmiş şarkıları göster"),
-            ("!geriekle <sayı>", "Geçmişten sıraya ekle"),
-        ]
-        
-        for cmd, desc in history_commands:
-            embed.add_field(name=cmd, value=desc, inline=True)
-        
-        embed.add_field(name="**🎵 Spotify**", value="", inline=False)
-        embed.add_field(name="!sp <spotify_url>", value="Spotify playlist/album/şarkı çal", inline=True)
-        
-        embed.add_field(name="!mhelp", value="Bu yardım menüsünü göster", inline=False)
-        embed.set_footer(text="💡 İpucu: Komutları kullanırken prefix olarak ! kullanın")
+        embed.set_footer(text="Prefix: ! | Örnek: !p never gonna give you up")
         
         await ctx.send(embed=embed)
     except Exception as e:
+        # Embed hatası varsa basit mesaj gönder
+        help_text = """
+🎵 **Müzik Bot Komutları:**
+
+**Temel:** !join, !leave, !p <şarkı>, !skip, !stop, !pause, !resume
+**Kontrol:** !q, !clear, !shuffle, !volume, !np  
+**İleri:** !r, !efekt, !history, !sp <url>
+
+**Kullanım:** !p never gonna give you up
+        """
+        await ctx.send(help_text)
         logger.error(f'Help komutu hatası: {e}')
-        await ctx.send('❌ Yardım menüsü gösterilirken hata oluştu!')
 
 # Diğer tüm komutlarınızı buraya ekleyin...
 # Bot'u başlat
