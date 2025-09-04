@@ -81,9 +81,9 @@ except Exception as e:
     logger.error(f"Spotify ayarları hatası: {e}")
     spotify = None
 
-# YouTube DL ayarları
+# YouTube DL ayarları - bu bölümü bulun ve değiştirin
 ytdl_format_options = {
-    'format': 'bestaudio/best',
+    'format': 'bestaudio[ext=m4a]/bestaudio/best',
     'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
     'noplaylist': True,
@@ -92,35 +92,28 @@ ytdl_format_options = {
     'logtostderr': False,
     'quiet': True,
     'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0'
+    'default_search': 'ytsearch',
+    'source_address': '0.0.0.0',
+    'force_json': True,
+    'extract_flat': False,
+    'writethumbnail': False,
+    'writeinfojson': False
 }
 
 # Ses efektleri için FFmpeg ayarları
 def get_ffmpeg_options(effect=None):
     """Ses efektine göre FFmpeg ayarları döndür"""
-    base_options = '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'
+    base_options = '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -vn'
     
-    effects = {
-        'bassboost': '-af "bass=g=10"',
-        'nightcore': '-af "asetrate=44100*1.25,atempo=1.25"',
-        'slowed': '-af "asetrate=44100*0.8,atempo=0.8"',
-        'vaporwave': '-af "asetrate=44100*0.9,atempo=0.9,tremolo=5:0.7"',
-        '8d': '-af "apulsator=hz=0.125"',
-        'echo': '-af "aecho=0.8:0.9:1000:0.3"',
-        'treble': '-af "treble=g=5"',
-        'normal': '-vn'
-    }
-    
-    if effect and effect in effects:
+    if effect and effect != 'normal':
         return {
             'before_options': base_options,
-            'options': effects[effect]
+            'options': '-f wav'
         }
     else:
         return {
             'before_options': base_options,
-            'options': '-vn'
+            'options': '-f wav'
         }
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
