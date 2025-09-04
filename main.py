@@ -168,11 +168,12 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.webpage_url = data.get('webpage_url')
 
     @classmethod
-async def from_url(cls, url, *, loop=None, stream=False, effect='normal'):
-    loop = loop or asyncio.get_event_loop()
-    try:
+@classmethod
+async def from_url(cls, url, *, loop=None, stream=False, effect='normal'):  # Bu satır class içinde olmalı
+    loop = loop or asyncio.get_event_loop()  # 4 boşluk girinti
+    try:  # 4 boşluk girinti
         # Basit arama terimi olarak işle
-        search_query = f"ytsearch:{url}"
+        search_query = f"ytsearch:{url}"  # 8 boşluk girinti
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(search_query, download=False))
         
         if 'entries' in data and len(data['entries']) > 0:
